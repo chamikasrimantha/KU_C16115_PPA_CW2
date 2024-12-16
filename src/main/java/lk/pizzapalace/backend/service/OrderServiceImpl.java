@@ -76,11 +76,11 @@ public class OrderServiceImpl implements OrderService {
     public UserEntity login(String email, String password) {
         for (UserEntity user : users) {
             if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
-                System.out.println("Login successful for user: " + user.getUsername());
+                // System.out.println("Login successful for user: " + user.getUsername());
                 return user;
             }
         }
-        System.out.println("Login failed. Invalid email or password.");
+        // System.out.println("Login failed. Invalid email or password.");
         return null;
     }
 

@@ -26,6 +26,8 @@ public class PizzaEntity {
     @Column(name = "pizzaId")
     private Long id;
 
+    private String name;
+
     @Enumerated(EnumType.STRING)
     private CrustType crustType;
 
@@ -52,6 +54,14 @@ public class PizzaEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public CrustType getCrustType() {
