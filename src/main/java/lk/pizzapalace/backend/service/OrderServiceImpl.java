@@ -5,57 +5,28 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lk.pizzapalace.backend.entity.Admin;
 import lk.pizzapalace.backend.entity.Customer;
+import lk.pizzapalace.backend.entity.FavouritePizzaEntity;
 import lk.pizzapalace.backend.entity.OrderEntity;
 import lk.pizzapalace.backend.entity.PaymentEntity;
 import lk.pizzapalace.backend.entity.PizzaEntity;
 import lk.pizzapalace.backend.entity.PromotionEntity;
 import lk.pizzapalace.backend.entity.RateEntity;
-import lk.pizzapalace.backend.entity.UserEntity;
 import lk.pizzapalace.backend.entity.enums.OrderStatus;
 import lk.pizzapalace.backend.entity.enums.ToppingsType;
 import lk.pizzapalace.backend.service.observer.OrderObserver;
 import lk.pizzapalace.backend.service.strategy.PaymentStrategy;
 
 public class OrderServiceImpl implements OrderService {
-    
-    private final List<UserEntity> users = new ArrayList<>();
-    private final List<PizzaEntity> pizzaMenu = new ArrayList<>();
+
+    // private final List<UserEntity> users = new ArrayList<>();
+    // private final List<PizzaEntity> pizzaMenu = new ArrayList<>();
+    private final List<FavouritePizzaEntity> favouritePizzas = new ArrayList<>();
     private final List<PromotionEntity> promotions = new ArrayList<>();
     private final List<OrderEntity> orders = new ArrayList<>();
     private final List<OrderObserver> observers = new ArrayList<>();
 
-    @Override
-    public Customer registerCustomer(Customer customer) {
-        users.add(customer);
-        return customer;
-    }
-
-    @Override
-    public Admin registerAdmin(Admin admin) {
-        users.add(admin);
-        return admin;
-    }
-
-    @Override
-    public UserEntity login(UserEntity user) {
-        return users.stream()
-                .filter(u -> u.getEmail().equals(user.getEmail()) && u.getPassword().equals(user.getPassword()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
-    public PizzaEntity customizePizza(PizzaEntity pizza) {
-        pizzaMenu.add(pizza);
-        return pizza;
-    }
-
-    @Override
-    public void processPizzaCustomization(PizzaEntity pizza) {
-        pizzaMenu.add(pizza);
-    }
+    // private UserService userService = new UserServiceImpl(); // Or inject via constructor
 
     @Override
     public OrderEntity createOrder(OrderEntity order) {
@@ -66,9 +37,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void placeOrder(OrderEntity order) {
-        order.setStatus(OrderStatus.ORDER_PREPARING_STARTED);
-        notifyObservers(order);
+    public void updateOrderStatus(OrderEntity updatedOrder) {
+        OrderEntity existingOrder = getOrderById(updatedOrder.getId());
+        if (existingOrder != null) {
+            existingOrder.setStatus(updatedOrder.getStatus());
+            // System.out.println("Order ID " + updatedOrder.getId() + " status updated to " + updatedOrder.getStatus());
+        } else {
+            System.out.println("Order not found!");
+        }
     }
 
     @Override
@@ -77,13 +53,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void saveFavoritePizza(Customer customer, PizzaEntity pizza) {
-        customer.getFavourites().add(pizza);
+    public OrderEntity getOrderById(Long id) {
+        return orders.stream()
+                .filter(a -> a.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
-    public List<PizzaEntity> getFavoritePizzas(Customer customer) {
-        return customer.getFavourites();
+    public List<OrderEntity> getAllOrders() {
+        return orders;
+    }
+
+    @Override
+    public FavouritePizzaEntity saveFavouritePizza(FavouritePizzaEntity favouritePizzaEntity) {
+        // Ensure that the user and pizza are correctly set in the FavouritePizzaEntity
+        if (favouritePizzaEntity.getUserEntity() != null && favouritePizzaEntity.getPizzaEntity() != null) {
+            favouritePizzas.add(favouritePizzaEntity);
+        }
+        return favouritePizzaEntity;
+    }
+
+    @Override
+    public List<PizzaEntity> getFavoritePizzasByUser(Long id) {
+        return null;
+    }
+
+    @Override
+    public FavouritePizzaEntity getFavouritePizzaById(Long id) {
+        return favouritePizzas.stream()
+                .filter(a -> a.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -108,8 +109,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void addLoyaltyPoints(Customer customer, double amount) {
-        int points = (int) amount / 10; // Example: 1 point for every 10 currency spent
-        customer.setLoyaltyPoints(customer.getLoyaltyPoints() + points);
+        // Award 10 points for each order
+        int pointsToAdd = 10;
+        customer.setLoyaltyPoints(customer.getLoyaltyPoints() + pointsToAdd);
     }
 
     @Override
@@ -155,6 +157,6 @@ public class OrderServiceImpl implements OrderService {
         for (OrderObserver observer : observers) {
             observer.update(order.getStatus());
         }
-    }    
+    }
 
 }

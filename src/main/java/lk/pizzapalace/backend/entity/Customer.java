@@ -11,7 +11,6 @@ import jakarta.persistence.OneToMany;
 
 @Entity
 public class Customer extends UserEntity {
-    private List<PizzaEntity> favourites;
     private int loyaltyPoints;
     private String phone;
     private String address;
@@ -22,14 +21,6 @@ public class Customer extends UserEntity {
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userentity", cascade = CascadeType.ALL)
     private List<OrderEntity> orderEntities;
-
-    public List<PizzaEntity> getFavourites() {
-        return favourites;
-    }
-
-    public void setFavourites(List<PizzaEntity> favourites) {
-        this.favourites = favourites;
-    }
 
     public int getLoyaltyPoints() {
         return loyaltyPoints;
