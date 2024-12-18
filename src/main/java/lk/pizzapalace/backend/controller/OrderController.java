@@ -59,7 +59,7 @@ public class OrderController {
         System.out.println("╚═══════════════════════════════════════════╝");
         start();
     }
-    
+
     public void start() {
         boolean running = true;
         while (running) {
@@ -72,11 +72,11 @@ public class OrderController {
             System.out.println("║  4. Exit                             ║");
             System.out.println("╚══════════════════════════════════════╝");
             System.out.print("Choose an option: ");
-    
+
             try {
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
-    
+
                 switch (choice) {
                     case 1 -> registerCustomer();
                     case 2 -> registerAdmin();
@@ -101,12 +101,12 @@ public class OrderController {
             }
         }
     }
-    
+
     private void registerCustomer() {
         System.out.println("╔══════════════════════════════════════╗");
         System.out.println("║       Customer Registration          ║");
         System.out.println("╠══════════════════════════════════════╣");
-        
+
         System.out.print("  Username: ");
         String username = scanner.nextLine();
         System.out.print("  Email: ");
@@ -119,7 +119,7 @@ public class OrderController {
         String address = scanner.nextLine();
         System.out.print("  Name: ");
         String name = scanner.nextLine();
-    
+
         Customer customer = new Customer();
         customer.setId(customerIdCounter++);
         customer.setUsername(username);
@@ -130,20 +130,20 @@ public class OrderController {
         customer.setName(name);
         customer.setLoyaltyPoints(0);
         customer.setFavourites(null);
-    
+
         Customer registeredCustomer = userService.registerCustomer(customer);
-        
+
         System.out.println("╠══════════════════════════════════════╣");
         System.out.println("║ Customer registered successfully!    ║");
         System.out.println("  ║ Your ID: " + String.format("%-25s", registeredCustomer.getId()) + "║");
         System.out.println("╚══════════════════════════════════════╝");
     }
-    
+
     private void registerAdmin() {
         System.out.println("╔══════════════════════════════════════╗");
         System.out.println("║         Admin Registration           ║");
         System.out.println("╠══════════════════════════════════════╣");
-        
+
         System.out.print("  Username: ");
         String username = scanner.nextLine();
         System.out.print("  Email: ");
@@ -152,36 +152,36 @@ public class OrderController {
         String password = scanner.nextLine();
         System.out.print("  Name: ");
         String name = scanner.nextLine();
-    
+
         Admin admin = new Admin();
         admin.setId(adminIdCounter++);
         admin.setUsername(username);
         admin.setEmail(email);
         admin.setPassword(password);
         admin.setName(name);
-    
+
         Admin registeredAdmin = userService.registerAdmin(admin);
-        
+
         System.out.println("╠══════════════════════════════════════╣");
         System.out.println("║ Admin registered successfully!       ║");
         System.out.println("  ║ Your ID: " + String.format("%-25s", registeredAdmin.getId()) + "║");
         System.out.println("╚══════════════════════════════════════╝");
     }
-    
+
     private void login() {
         System.out.println("╔══════════════════════════════════════╗");
         System.out.println("║           Login Details              ║");
         System.out.println("╠══════════════════════════════════════╣");
-        
+
         System.out.print("  Email: ");
         String email = scanner.nextLine();
         System.out.print("  Password: ");
         String password = scanner.nextLine();
-    
+
         UserEntity user = new UserEntity();
         user.setEmail(email);
         user.setPassword(password);
-    
+
         UserEntity loggedInUser = userService.login(user);
         if (loggedInUser != null) {
             currentUser = loggedInUser;
@@ -189,7 +189,7 @@ public class OrderController {
             System.out.println("║ Login successful!                   ║");
             System.out.println("  ║ Welcome, " + String.format("%-25s", loggedInUser.getUsername()) + "║");
             System.out.println("╚══════════════════════════════════════╝");
-    
+
             if (loggedInUser instanceof Customer) {
                 customerMenu();
                 currentUser = loggedInUser;
@@ -203,7 +203,7 @@ public class OrderController {
             System.out.println("╚══════════════════════════════════════╝");
         }
     }
-    
+
     private void customerMenu() {
         boolean loggedIn = true;
         while (loggedIn) {
@@ -220,11 +220,11 @@ public class OrderController {
             System.out.println("║  8. Logout                           ║");
             System.out.println("╚══════════════════════════════════════╝");
             System.out.print("Choose an option: ");
-    
+
             try {
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
-    
+
                 switch (choice) {
                     case 1 -> customizePizza();
                     case 2 -> placeOrder();
@@ -254,7 +254,7 @@ public class OrderController {
             }
         }
     }
-    
+
     private void adminMenu() {
         boolean loggedIn = true;
         while (loggedIn) {
@@ -267,11 +267,11 @@ public class OrderController {
             System.out.println("║  4. Logout                           ║");
             System.out.println("╚══════════════════════════════════════╝");
             System.out.print("Choose an option: ");
-    
+
             try {
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
-    
+
                 switch (choice) {
                     case 1 -> addPromotion();
                     case 2 -> viewPromotions();
@@ -446,6 +446,29 @@ public class OrderController {
             case 2 -> PaymentType.DIGITAL_WALLET;
             default -> throw new IllegalArgumentException("Invalid payment type");
         };
+
+        // Ask for payment details based on payment type
+        if (paymentType == PaymentType.CREDIT_CARD) {
+            System.out.println("Enter Credit Card Details:");
+            System.out.print("Card Number: ");
+            scanner.nextLine();
+            System.out.print("Cardholder Name: ");
+            scanner.nextLine();
+            System.out.print("Expiry Date (MM/YY): ");
+            scanner.nextLine();
+            System.out.print("CVV: ");
+            scanner.nextLine();
+
+            System.out.println("Credit Card details captured. Proceeding with payment...");
+        } else if (paymentType == PaymentType.DIGITAL_WALLET) {
+            System.out.println("Enter Digital Wallet Details:");
+            System.out.print("Wallet Name (e.g., PayPal, Google Pay): ");
+            scanner.nextLine();
+            System.out.print("Wallet ID/Email: ");
+            scanner.nextLine();
+
+            System.out.println("Digital Wallet details captured. Proceeding with payment...");
+        }
 
         // Check current loyalty points
         int currentLoyaltyPoints = orderService.getLoyaltyPoints(customer);
@@ -646,6 +669,9 @@ public class OrderController {
                 case OUT_FOR_DELIVERY:
                     System.out.println("Your order is out for delivery.");
                     break;
+                case DELIVERED:
+                    System.out.println("Your order has delivered.");
+                    break;
                 case READY_FOR_PICKUP:
                     System.out.println("Your order is ready for pickup.");
                     break;
@@ -749,24 +775,24 @@ public class OrderController {
             System.out.println("No user is currently logged in.");
             return;
         }
-    
+
         // Get all orders for the current user
         List<OrderEntity> userOrders = orderService.getAllOrders().stream()
                 .filter(order -> order.getUserEntity().equals(currentUser))
                 .collect(Collectors.toList());
-    
+
         // Check if user has any orders
         if (userOrders.isEmpty()) {
             System.out.println("You have no orders to provide feedback for.");
             return;
         }
-    
+
         // Show all feedbacks provided by the current user
         System.out.println("\n--- Your Feedbacks ---");
         List<RateEntity> userFeedbacks = orderService.getAllFeedbacks().stream()
                 .filter(feedback -> feedback.getOrderEntity().getUserEntity().equals(currentUser))
                 .collect(Collectors.toList());
-    
+
         if (userFeedbacks.isEmpty()) {
             System.out.println("You haven't provided any feedback yet.");
         } else {
@@ -777,7 +803,7 @@ public class OrderController {
                 System.out.println("---");
             }
         }
-    
+
         while (true) {
             // Display user's orders
             System.out.println("\n--- Your Orders ---");
@@ -788,7 +814,7 @@ public class OrderController {
                         + " | Status: " + order.getStatus());
             }
             System.out.println("0. Exit");
-    
+
             // Choose an order to provide feedback
             System.out.print("Select an order to provide feedback (enter number): ");
             int choice;
@@ -798,27 +824,27 @@ public class OrderController {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
             }
-    
+
             // Exit option
             if (choice == 0) {
                 return;
             }
-    
+
             // Validate order selection
             if (choice < 1 || choice > userOrders.size()) {
                 System.out.println("Invalid order selection.");
                 continue;
             }
-    
+
             // Selected order
             OrderEntity selectedOrder = userOrders.get(choice - 1);
-    
+
             // Check if order is eligible for feedback
             if (selectedOrder.getStatus() != OrderStatus.READY_FOR_PICKUP) {
                 System.out.println("You can only provide feedback for delivered orders.");
                 continue;
             }
-    
+
             // Provide rating
             System.out.print("Rate your experience (1-5 stars): ");
             double rating;
@@ -832,31 +858,30 @@ public class OrderController {
                 System.out.println("Invalid rating. Please enter a number between 1 and 5.");
                 continue;
             }
-    
+
             // Provide feedback text
             System.out.println("Please provide your detailed feedback (optional):");
             String feedbackText = scanner.nextLine();
-    
+
             // Create feedback entity
             RateEntity rateEntity = new RateEntity();
             rateEntity.setId(rateIdCounter++);
             rateEntity.setRating(rating);
             rateEntity.setFeedback(feedbackText.isEmpty() ? "No additional comments" : feedbackText);
             rateEntity.setOrderEntity(selectedOrder);
-    
+
             // Save feedback
             orderService.provideFeedback(rateEntity);
-    
+
             System.out.println("\nThank you for your feedback!");
-    
+
             // Option to provide feedback for another order
             System.out.println("Do you want to provide feedback for another order? (yes/no)");
             if (!scanner.nextLine().equalsIgnoreCase("yes")) {
                 break;
             }
         }
-    }    
-    
+    }
 
     // Method to add a promotion
     private void addPromotion() {
@@ -925,12 +950,12 @@ public class OrderController {
             // Display all orders
             System.out.println("All Orders:");
 
-            // Fetch all orders and sort them so READY_FOR_PICKUP comes last
+            // Fetch all orders and sort them so DELIVERED comes last
             List<OrderEntity> ordersList = orderService.getAllOrders();
             ordersList.sort((o1, o2) -> {
-                if (o1.getStatus() == OrderStatus.READY_FOR_PICKUP)
+                if (o1.getStatus() == OrderStatus.DELIVERED)
                     return 1;
-                if (o2.getStatus() == OrderStatus.READY_FOR_PICKUP)
+                if (o2.getStatus() == OrderStatus.DELIVERED)
                     return -1;
                 return o1.getStatus().compareTo(o2.getStatus());
             });
@@ -959,6 +984,7 @@ public class OrderController {
             System.out.println("3) ORDER_PREPARED");
             System.out.println("4) READY_FOR_PICKUP");
             System.out.println("5) OUT_FOR_DELIVERY");
+            System.out.println("6) DELIVERED");
 
             int statusChoice = Integer.parseInt(scanner.nextLine());
             OrderStatus newStatus = null;
@@ -969,6 +995,7 @@ public class OrderController {
                 case 3 -> newStatus = OrderStatus.ORDER_PREPARED;
                 case 4 -> newStatus = OrderStatus.READY_FOR_PICKUP;
                 case 5 -> newStatus = OrderStatus.OUT_FOR_DELIVERY;
+                case 6 -> newStatus = OrderStatus.DELIVERED;
                 default -> System.out.println("Invalid choice!");
             }
 
