@@ -54,55 +54,72 @@ public class OrderController {
     }
 
     public void startApp() {
-        System.out.println("Welcome to Pizza Palace Order Management System!");
+        System.out.println("╔═══════════════════════════════════════════╗");
+        System.out.println("║  Welcome to Pizza Palace Order Management ║");
+        System.out.println("╚═══════════════════════════════════════════╝");
         start();
     }
-
+    
     public void start() {
         boolean running = true;
         while (running) {
-            System.out.println("\n1. Register as Customer");
-            System.out.println("2. Register as Admin");
-            System.out.println("3. Login");
-            System.out.println("4. Exit");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║           MAIN MENU                  ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("║  1. Register as Customer             ║");
+            System.out.println("║  2. Register as Admin                ║");
+            System.out.println("║  3. Login                            ║");
+            System.out.println("║  4. Exit                             ║");
+            System.out.println("╚══════════════════════════════════════╝");
             System.out.print("Choose an option: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (choice) {
-                case 1:
-                    registerCustomer();
-                    break;
-                case 2:
-                    registerAdmin();
-                    break;
-                case 3:
-                    login();
-                    break;
-                case 4:
-                    System.out.println("Exiting... Goodbye!");
-                    running = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice. Try again.");
+    
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+    
+                switch (choice) {
+                    case 1 -> registerCustomer();
+                    case 2 -> registerAdmin();
+                    case 3 -> login();
+                    case 4 -> {
+                        System.out.println("╔══════════════════════════════════════╗");
+                        System.out.println("║        Exiting... Goodbye!           ║");
+                        System.out.println("╚══════════════════════════════════════╝");
+                        running = false;
+                    }
+                    default -> {
+                        System.out.println("╔══════════════════════════════════════╗");
+                        System.out.println("║     Invalid choice. Try again.       ║");
+                        System.out.println("╚══════════════════════════════════════╝");
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("╔══════════════════════════════════════╗");
+                System.out.println("║   Please enter a valid number.       ║");
+                System.out.println("╚══════════════════════════════════════╝");
+                scanner.nextLine(); // Clear invalid input
             }
         }
     }
-
+    
     private void registerCustomer() {
-        System.out.println("Enter customer details:");
-        System.out.print("Username: ");
+        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println("║       Customer Registration          ║");
+        System.out.println("╠══════════════════════════════════════╣");
+        
+        System.out.print("  Username: ");
         String username = scanner.nextLine();
-        System.out.print("Email: ");
+        System.out.print("  Email: ");
         String email = scanner.nextLine();
-        System.out.print("Password: ");
+        System.out.print("  Password: ");
         String password = scanner.nextLine();
-        System.out.print("Phone: ");
+        System.out.print("  Phone: ");
         String phone = scanner.nextLine();
-        System.out.print("Address: ");
+        System.out.print("  Address: ");
         String address = scanner.nextLine();
-        System.out.print("Name: ");
+        System.out.print("  Name: ");
         String name = scanner.nextLine();
+    
         Customer customer = new Customer();
         customer.setId(customerIdCounter++);
         customer.setUsername(username);
@@ -113,44 +130,66 @@ public class OrderController {
         customer.setName(name);
         customer.setLoyaltyPoints(0);
         customer.setFavourites(null);
+    
         Customer registeredCustomer = userService.registerCustomer(customer);
-        System.out.println("Customer registered successfully with ID: " + registeredCustomer.getId());
+        
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("║ Customer registered successfully!    ║");
+        System.out.println("  ║ Your ID: " + String.format("%-25s", registeredCustomer.getId()) + "║");
+        System.out.println("╚══════════════════════════════════════╝");
     }
-
+    
     private void registerAdmin() {
-        System.out.println("Enter admin details:");
-        System.out.print("Username: ");
+        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println("║         Admin Registration           ║");
+        System.out.println("╠══════════════════════════════════════╣");
+        
+        System.out.print("  Username: ");
         String username = scanner.nextLine();
-        System.out.print("Email: ");
+        System.out.print("  Email: ");
         String email = scanner.nextLine();
-        System.out.print("Password: ");
+        System.out.print("  Password: ");
         String password = scanner.nextLine();
-        System.out.print("Name: ");
+        System.out.print("  Name: ");
         String name = scanner.nextLine();
+    
         Admin admin = new Admin();
         admin.setId(adminIdCounter++);
         admin.setUsername(username);
         admin.setEmail(email);
         admin.setPassword(password);
         admin.setName(name);
+    
         Admin registeredAdmin = userService.registerAdmin(admin);
-        System.out.println("Admin registered successfully with ID: " + registeredAdmin.getId());
+        
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("║ Admin registered successfully!       ║");
+        System.out.println("  ║ Your ID: " + String.format("%-25s", registeredAdmin.getId()) + "║");
+        System.out.println("╚══════════════════════════════════════╝");
     }
-
+    
     private void login() {
-        System.out.println("Enter login details:");
-        System.out.print("Email: ");
+        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println("║           Login Details              ║");
+        System.out.println("╠══════════════════════════════════════╣");
+        
+        System.out.print("  Email: ");
         String email = scanner.nextLine();
-        System.out.print("Password: ");
+        System.out.print("  Password: ");
         String password = scanner.nextLine();
+    
         UserEntity user = new UserEntity();
         user.setEmail(email);
         user.setPassword(password);
-
+    
         UserEntity loggedInUser = userService.login(user);
         if (loggedInUser != null) {
             currentUser = loggedInUser;
-            System.out.println("Login successful! Welcome, " + loggedInUser.getUsername());
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("║ Login successful!                   ║");
+            System.out.println("  ║ Welcome, " + String.format("%-25s", loggedInUser.getUsername()) + "║");
+            System.out.println("╚══════════════════════════════════════╝");
+    
             if (loggedInUser instanceof Customer) {
                 customerMenu();
                 currentUser = loggedInUser;
@@ -159,86 +198,102 @@ public class OrderController {
                 currentUser = loggedInUser;
             }
         } else {
-            System.out.println("Invalid email. Login failed.");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("║ Invalid email. Login failed.         ║");
+            System.out.println("╚══════════════════════════════════════╝");
         }
     }
-
+    
     private void customerMenu() {
         boolean loggedIn = true;
         while (loggedIn) {
-            System.out.println("\n1. Customize Pizza");
-            System.out.println("2. Place Order");
-            System.out.println("3. Track Order");
-            System.out.println("4. User Profile");
-            System.out.println("5. Payment & Loyalty");
-            System.out.println("6. Feedback and Ratings");
-            System.out.println("7. View Active Promotions");
-            System.out.println("8. Logout");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║          Customer Menu               ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("║  1. Customize Pizza                  ║");
+            System.out.println("║  2. Place Order                      ║");
+            System.out.println("║  3. Track Order                      ║");
+            System.out.println("║  4. User Profile                     ║");
+            System.out.println("║  5. Payment & Loyalty                ║");
+            System.out.println("║  6. Feedback and Ratings             ║");
+            System.out.println("║  7. View Active Promotions           ║");
+            System.out.println("║  8. Logout                           ║");
+            System.out.println("╚══════════════════════════════════════╝");
             System.out.print("Choose an option: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (choice) {
-                case 1:
-                    customizePizza();
-                    break;
-                case 2:
-                    placeOrder();
-                    break;
-                case 3:
-                    trackOrder();
-                    break;
-                case 4:
-                    userProfile();
-                    break;
-                case 5:
-                    paymentAndLoyalty();
-                    break;
-                case 6:
-                    provideFeedback();
-                    break;
-                case 7:
-                    viewPromotions(); // Display active promotions when this option is selected
-                    break;
-                case 8:
-                    System.out.println("Logging out...");
-                    currentUser = null;
-                    loggedIn = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice. Try again.");
+    
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+    
+                switch (choice) {
+                    case 1 -> customizePizza();
+                    case 2 -> placeOrder();
+                    case 3 -> trackOrder();
+                    case 4 -> userProfile();
+                    case 5 -> paymentAndLoyalty();
+                    case 6 -> provideFeedback();
+                    case 7 -> viewPromotions();
+                    case 8 -> {
+                        System.out.println("╔══════════════════════════════════════╗");
+                        System.out.println("║           Logging out...             ║");
+                        System.out.println("╚══════════════════════════════════════╝");
+                        currentUser = null;
+                        loggedIn = false;
+                    }
+                    default -> {
+                        System.out.println("╔══════════════════════════════════════╗");
+                        System.out.println("║     Invalid choice. Try again.       ║");
+                        System.out.println("╚══════════════════════════════════════╝");
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("╔══════════════════════════════════════╗");
+                System.out.println("║   Please enter a valid number.       ║");
+                System.out.println("╚══════════════════════════════════════╝");
+                scanner.nextLine(); // Clear invalid input
             }
         }
     }
-
+    
     private void adminMenu() {
         boolean loggedIn = true;
         while (loggedIn) {
-            System.out.println("\n1. Add Promotion");
-            System.out.println("2. View Promotions");
-            System.out.println("3. Update status of orders");
-            System.out.println("4. Logout");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║              Admin Menu              ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("║  1. Add Promotion                    ║");
+            System.out.println("║  2. View Promotions                  ║");
+            System.out.println("║  3. Update status of orders          ║");
+            System.out.println("║  4. Logout                           ║");
+            System.out.println("╚══════════════════════════════════════╝");
             System.out.print("Choose an option: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (choice) {
-                case 1:
-                    addPromotion();
-                    break;
-                case 2:
-                    viewPromotions();
-                    break;
-                case 3:
-                    updateOrderStatus();
-                    break;
-                case 4:
-                    System.out.println("Logging out...");
-                    currentUser = null;
-                    loggedIn = false;
-                    break;
-                default:
-                    System.out.println("Invalid choice. Try again.");
+    
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+    
+                switch (choice) {
+                    case 1 -> addPromotion();
+                    case 2 -> viewPromotions();
+                    case 3 -> updateOrderStatus();
+                    case 4 -> {
+                        System.out.println("╔══════════════════════════════════════╗");
+                        System.out.println("║           Logging out...             ║");
+                        System.out.println("╚══════════════════════════════════════╝");
+                        currentUser = null;
+                        loggedIn = false;
+                    }
+                    default -> {
+                        System.out.println("╔══════════════════════════════════════╗");
+                        System.out.println("║     Invalid choice. Try again.       ║");
+                        System.out.println("╚══════════════════════════════════════╝");
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("╔══════════════════════════════════════╗");
+                System.out.println("║   Please enter a valid number.       ║");
+                System.out.println("╚══════════════════════════════════════╝");
+                scanner.nextLine(); // Clear invalid input
             }
         }
     }
