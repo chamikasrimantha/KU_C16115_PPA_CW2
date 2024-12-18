@@ -1,5 +1,6 @@
 package lk.pizzapalace.backend.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -54,7 +55,7 @@ public class OrderEntity {
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "orderEntity", cascade = CascadeType.ALL)
-    private List<RateEntity> rateEntities;
+    private List<RateEntity> rateEntities = new ArrayList<>(); // Direct initialization
 
     public Long getId() {
         return id;

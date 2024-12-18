@@ -43,6 +43,7 @@ public interface OrderService {
      // Feedback and Ratings
      void provideFeedback(RateEntity rate);
      List<RateEntity> getFeedbackForOrder(OrderEntity order);
+     List<RateEntity> getAllFeedbacks();
  
      // Enhance Order
      void enhanceOrder(OrderEntity order, boolean addToppings, boolean specialPackaging);

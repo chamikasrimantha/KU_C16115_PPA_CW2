@@ -26,7 +26,8 @@ public class OrderServiceImpl implements OrderService {
     private final List<OrderEntity> orders = new ArrayList<>();
     private final List<OrderObserver> observers = new ArrayList<>();
 
-    // private UserService userService = new UserServiceImpl(); // Or inject via constructor
+    // private UserService userService = new UserServiceImpl(); // Or inject via
+    // constructor
 
     @Override
     public OrderEntity createOrder(OrderEntity order) {
@@ -41,7 +42,8 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity existingOrder = getOrderById(updatedOrder.getId());
         if (existingOrder != null) {
             existingOrder.setStatus(updatedOrder.getStatus());
-            // System.out.println("Order ID " + updatedOrder.getId() + " status updated to " + updatedOrder.getStatus());
+            // System.out.println("Order ID " + updatedOrder.getId() + " status updated to "
+            // + updatedOrder.getStatus());
         } else {
             System.out.println("Order not found!");
         }
@@ -141,6 +143,24 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<RateEntity> getFeedbackForOrder(OrderEntity order) {
         return order.getRateEntities();
+    }
+
+    @Override
+    public List<RateEntity> getAllFeedbacks() {
+        // Create a list to store all feedbacks
+        List<RateEntity> allFeedbacks = new ArrayList<>();
+
+        // Get all orders (assuming this method is available in your order service)
+        List<OrderEntity> allOrders = getAllOrders(); // Replace with your actual method to fetch all orders
+
+        // Iterate through each order and add its feedbacks to the list
+        for (OrderEntity order : allOrders) {
+            List<RateEntity> orderFeedbacks = order.getRateEntities();
+            allFeedbacks.addAll(orderFeedbacks); // Add all feedbacks for the current order
+        }
+
+        // Return the aggregated list of feedbacks
+        return allFeedbacks;
     }
 
     @Override

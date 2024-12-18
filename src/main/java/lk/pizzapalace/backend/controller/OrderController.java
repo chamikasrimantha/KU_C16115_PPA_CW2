@@ -40,6 +40,8 @@ public class OrderController {
     private static Long adminIdCounter = 1L;
     private static Long pizzaIdCounter = 1L;
     private static Long orderIdCounter = 1L;
+    private static Long rateIdCounter = 1L;
+    private static Long promotionIdCounter = 1L;
     private static Long favouritePizzaIdCounter = 1L;
     private final Scanner scanner = new Scanner(System.in);
     private UserEntity currentUser = null; // To keep track of logged-in user
@@ -692,18 +694,35 @@ public class OrderController {
             System.out.println("No user is currently logged in.");
             return;
         }
-
+    
         // Get all orders for the current user
         List<OrderEntity> userOrders = orderService.getAllOrders().stream()
                 .filter(order -> order.getUserEntity().equals(currentUser))
                 .collect(Collectors.toList());
-
+    
         // Check if user has any orders
         if (userOrders.isEmpty()) {
             System.out.println("You have no orders to provide feedback for.");
             return;
         }
-
+    
+        // Show all feedbacks provided by the current user
+        System.out.println("\n--- Your Feedbacks ---");
+        List<RateEntity> userFeedbacks = orderService.getAllFeedbacks().stream()
+                .filter(feedback -> feedback.getOrderEntity().getUserEntity().equals(currentUser))
+                .collect(Collectors.toList());
+    
+        if (userFeedbacks.isEmpty()) {
+            System.out.println("You haven't provided any feedback yet.");
+        } else {
+            for (RateEntity feedback : userFeedbacks) {
+                System.out.println("Order ID: " + feedback.getOrderEntity().getId());
+                System.out.println("Rating: " + feedback.getRating() + " stars");
+                System.out.println("Feedback: " + feedback.getFeedback());
+                System.out.println("---");
+            }
+        }
+    
         while (true) {
             // Display user's orders
             System.out.println("\n--- Your Orders ---");
@@ -714,7 +733,7 @@ public class OrderController {
                         + " | Status: " + order.getStatus());
             }
             System.out.println("0. Exit");
-
+    
             // Choose an order to provide feedback
             System.out.print("Select an order to provide feedback (enter number): ");
             int choice;
@@ -724,27 +743,27 @@ public class OrderController {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
             }
-
+    
             // Exit option
             if (choice == 0) {
                 return;
             }
-
+    
             // Validate order selection
             if (choice < 1 || choice > userOrders.size()) {
                 System.out.println("Invalid order selection.");
                 continue;
             }
-
+    
             // Selected order
             OrderEntity selectedOrder = userOrders.get(choice - 1);
-
+    
             // Check if order is eligible for feedback
             if (selectedOrder.getStatus() != OrderStatus.READY_FOR_PICKUP) {
                 System.out.println("You can only provide feedback for delivered orders.");
                 continue;
             }
-
+    
             // Provide rating
             System.out.print("Rate your experience (1-5 stars): ");
             double rating;
@@ -758,42 +777,31 @@ public class OrderController {
                 System.out.println("Invalid rating. Please enter a number between 1 and 5.");
                 continue;
             }
-
+    
             // Provide feedback text
             System.out.println("Please provide your detailed feedback (optional):");
             String feedbackText = scanner.nextLine();
-
+    
             // Create feedback entity
             RateEntity rateEntity = new RateEntity();
+            rateEntity.setId(rateIdCounter++);
             rateEntity.setRating(rating);
             rateEntity.setFeedback(feedbackText.isEmpty() ? "No additional comments" : feedbackText);
             rateEntity.setOrderEntity(selectedOrder);
-
+    
             // Save feedback
             orderService.provideFeedback(rateEntity);
-
-            // Show existing feedbacks for the order
-            System.out.println("\n--- Existing Feedbacks for this Order ---");
-            List<RateEntity> existingFeedbacks = orderService.getFeedbackForOrder(selectedOrder);
-            if (existingFeedbacks.isEmpty()) {
-                System.out.println("No previous feedbacks.");
-            } else {
-                for (RateEntity feedback : existingFeedbacks) {
-                    System.out.println("Rating: " + feedback.getRating() + " stars");
-                    System.out.println("Feedback: " + feedback.getFeedback());
-                    System.out.println("---");
-                }
-            }
-
+    
             System.out.println("\nThank you for your feedback!");
-
+    
             // Option to provide feedback for another order
             System.out.println("Do you want to provide feedback for another order? (yes/no)");
             if (!scanner.nextLine().equalsIgnoreCase("yes")) {
                 break;
             }
         }
-    }
+    }    
+    
 
     // Method to add a promotion
     private void addPromotion() {
@@ -817,6 +825,7 @@ public class OrderController {
 
             // Create a new promotion entity
             PromotionEntity promotion = new PromotionEntity();
+            promotion.setId(promotionIdCounter++);
             promotion.setDescription(description);
             promotion.setDiscount(discount);
             promotion.setStartDate(startDate);
