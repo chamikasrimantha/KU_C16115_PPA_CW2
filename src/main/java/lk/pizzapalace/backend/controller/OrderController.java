@@ -486,7 +486,8 @@ public class OrderController {
                 System.out.println("1. 100 points = Rs. 10 discount");
                 System.out.println("2. 200 points = Rs. 25 discount");
                 System.out.println("3. 500 points = Rs. 75 discount");
-                System.out.println("4. Cancel");
+                System.out.println("4. 1000 points= Rs. 150 discount");
+                System.out.println("5. Cancel");
                 System.out.print("Choose a redemption option: ");
 
                 int redeemChoice = Integer.parseInt(scanner.nextLine());
@@ -520,6 +521,15 @@ public class OrderController {
                         }
                         break;
                     case 4:
+                        if (currentLoyaltyPoints >= 1000) {
+                            isLoyaltyUsed = true;
+                            discountAmount = 150;
+                            customer.setLoyaltyPoints(currentLoyaltyPoints - 1000);
+                        } else {
+                            System.out.println("Insufficient points for this redemption.");
+                        }
+                        break;
+                    case 5:
                         // User cancelled loyalty points usage
                         break;
                     default:
@@ -756,12 +766,12 @@ public class OrderController {
 
         // Explain loyalty points system
         System.out.println("\nLoyalty Points Details:");
-        System.out.println("- You earn 10 loyalty points with EVERY pizza order");
+        System.out.println("- You earn 10 loyalty points per every Rs. 100 spent");
         System.out.println("- Points accumulate with each purchase");
 
         // Show points earning potential
         System.out.println("\nPoints Earning Guide:");
-        System.out.println("- Each pizza order: +10 points");
+        System.out.println("- In every pizza order you can earn 10 loyalty points per every Rs. 100 spent");
         System.out.println("- Current balance: " + currentPoints + " points");
 
         // Press any key to continue
@@ -840,7 +850,7 @@ public class OrderController {
             OrderEntity selectedOrder = userOrders.get(choice - 1);
 
             // Check if order is eligible for feedback
-            if (selectedOrder.getStatus() != OrderStatus.READY_FOR_PICKUP) {
+            if (selectedOrder.getStatus() != OrderStatus.DELIVERED) {
                 System.out.println("You can only provide feedback for delivered orders.");
                 continue;
             }

@@ -13,47 +13,119 @@ import lk.pizzapalace.backend.entity.PizzaEntity;
 import lk.pizzapalace.backend.entity.PromotionEntity;
 import lk.pizzapalace.backend.entity.RateEntity;
 import lk.pizzapalace.backend.entity.enums.OrderStatus;
-import lk.pizzapalace.backend.entity.enums.ToppingsType;
+import lk.pizzapalace.backend.service.builder.OrderBuilder;
+import lk.pizzapalace.backend.service.chainofresponsibility.CrustCustomizationHandler;
+import lk.pizzapalace.backend.service.chainofresponsibility.OrderCustomizationHandler;
+import lk.pizzapalace.backend.service.chainofresponsibility.ToppingsCustomizationHandler;
+import lk.pizzapalace.backend.service.command.Command;
+import lk.pizzapalace.backend.service.command.PlaceOrderCommand;
+import lk.pizzapalace.backend.service.command.ProvideFeedbackCommand;
+import lk.pizzapalace.backend.service.decorator.BaseOrderDecorator;
+import lk.pizzapalace.backend.service.decorator.ExtraToppingsDecorator;
+import lk.pizzapalace.backend.service.decorator.OrderDecorator;
+import lk.pizzapalace.backend.service.decorator.SpecialPackagingDecorator;
 import lk.pizzapalace.backend.service.observer.OrderObserver;
 import lk.pizzapalace.backend.service.strategy.PaymentStrategy;
 
 public class OrderServiceImpl implements OrderService {
-
-    // private final List<UserEntity> users = new ArrayList<>();
-    // private final List<PizzaEntity> pizzaMenu = new ArrayList<>();
+    // Collections
     private final List<FavouritePizzaEntity> favouritePizzas = new ArrayList<>();
     private final List<PromotionEntity> promotions = new ArrayList<>();
     private final List<OrderEntity> orders = new ArrayList<>();
     private final List<OrderObserver> observers = new ArrayList<>();
 
-    // private UserService userService = new UserServiceImpl(); // Or inject via
-    // constructor
+    // Chain of Responsibility for customization
+    private final OrderCustomizationHandler crustHandler;
+    private final OrderCustomizationHandler toppingsHandler;
 
-    @Override
-    public OrderEntity createOrder(OrderEntity order) {
-        order.setStatus(OrderStatus.ORDER_RECEIVED);
-        orders.add(order);
-        notifyObservers(order);
-        return order;
+    public OrderServiceImpl() {
+        // Initialize handlers for Chain of Responsibility
+        crustHandler = new CrustCustomizationHandler();
+        toppingsHandler = new ToppingsCustomizationHandler();
+        crustHandler.setNextHandler(toppingsHandler);
     }
 
     @Override
-    public void updateOrderStatus(OrderEntity updatedOrder) {
-        OrderEntity existingOrder = getOrderById(updatedOrder.getId());
+    public OrderEntity createOrder(OrderEntity order) {
+        // Use Builder pattern to construct the order
+        OrderBuilder builder = new OrderBuilder()
+                .setId(order.getId())
+                .setDeliveryType(order.getDeliveryType())
+                .setStatus(OrderStatus.ORDER_RECEIVED)
+                .setUser(order.getUserEntity())
+                .setPizza(order.getPizzaEntity())
+                .setPayment(order.getPaymentEntity());
+
+        OrderEntity newOrder = builder.build();
+        orders.add(newOrder);
+
+        // Apply Chain of Responsibility for customization
+        crustHandler.handleCustomization(newOrder.getPizzaEntity());
+
+        // Notify observers using Observer pattern
+        notifyObservers(newOrder);
+
+        return newOrder;
+    }
+
+    @Override
+    public void updateOrderStatus(OrderEntity orderEntity) {
+        OrderEntity existingOrder = getOrderById(orderEntity.getId());
         if (existingOrder != null) {
-            existingOrder.setStatus(updatedOrder.getStatus());
-            // System.out.println("Order ID " + updatedOrder.getId() + " status updated to "
-            // + updatedOrder.getStatus());
-        } else {
-            System.out.println("Order not found!");
+            // Update the status directly
+            existingOrder.setStatus(orderEntity.getStatus());
+            notifyObservers(existingOrder);
         }
     }
 
     @Override
     public OrderEntity reviewOrder(OrderEntity order) {
-        return orders.stream().filter(o -> o.getId().equals(order.getId())).findFirst().orElse(null);
+        // Use Command pattern for review operation
+        Command reviewCommand = new PlaceOrderCommand(order);
+        reviewCommand.execute();
+        return getOrderById(order.getId());
     }
 
+    @Override
+    public void processPayment(PaymentEntity payment, PaymentStrategy strategy) {
+        // Strategy pattern for payment processing
+        strategy.processPayment(payment);
+    }
+
+    @Override
+    public void enhanceOrder(OrderEntity order, boolean addToppings, boolean specialPackaging) {
+        // Start with base decorator
+        OrderDecorator decorator = new BaseOrderDecorator(order);
+
+        // Add enhancements using decorator pattern
+        if (addToppings) {
+            decorator = new ExtraToppingsDecorator(decorator);
+            decorator.enhance();
+        }
+
+        if (specialPackaging) {
+            decorator = new SpecialPackagingDecorator(decorator);
+            decorator.enhance();
+        }
+    }
+
+    @Override
+    public void addOrderObserver(OrderObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeOrderObserver(OrderObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers(OrderEntity order) {
+        for (OrderObserver observer : observers) {
+            observer.update(order.getStatus());
+        }
+    }
+
+    // Standard CRUD operations
     @Override
     public OrderEntity getOrderById(Long id) {
         return orders.stream()
@@ -64,12 +136,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderEntity> getAllOrders() {
-        return orders;
+        return new ArrayList<>(orders);
     }
 
     @Override
     public FavouritePizzaEntity saveFavouritePizza(FavouritePizzaEntity favouritePizzaEntity) {
-        // Ensure that the user and pizza are correctly set in the FavouritePizzaEntity
         if (favouritePizzaEntity.getUserEntity() != null && favouritePizzaEntity.getPizzaEntity() != null) {
             favouritePizzas.add(favouritePizzaEntity);
         }
@@ -78,7 +149,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<PizzaEntity> getFavoritePizzasByUser(Long id) {
-        return null;
+        return favouritePizzas.stream()
+                .filter(fp -> fp.getUserEntity().getId().equals(id))
+                .map(FavouritePizzaEntity::getPizzaEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -95,24 +169,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addOrderObserver(OrderObserver observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeOrderObserver(OrderObserver observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void processPayment(PaymentEntity payment, PaymentStrategy strategy) {
-        strategy.processPayment(payment);
-    }
-
-    @Override
     public void addLoyaltyPoints(Customer customer, double amount) {
-        // Award 10 points for each order
-        int pointsToAdd = 10;
+        int pointsToAdd = (int) (amount / 100) * 10; // 10 points per 100 spent
         customer.setLoyaltyPoints(customer.getLoyaltyPoints() + pointsToAdd);
     }
 
@@ -137,6 +195,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void provideFeedback(RateEntity rate) {
+        Command feedbackCommand = new ProvideFeedbackCommand(rate.getFeedback());
+        feedbackCommand.execute();
         rate.getOrderEntity().getRateEntities().add(rate);
     }
 
@@ -147,36 +207,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<RateEntity> getAllFeedbacks() {
-        // Create a list to store all feedbacks
-        List<RateEntity> allFeedbacks = new ArrayList<>();
-
-        // Get all orders (assuming this method is available in your order service)
-        List<OrderEntity> allOrders = getAllOrders(); // Replace with your actual method to fetch all orders
-
-        // Iterate through each order and add its feedbacks to the list
-        for (OrderEntity order : allOrders) {
-            List<RateEntity> orderFeedbacks = order.getRateEntities();
-            allFeedbacks.addAll(orderFeedbacks); // Add all feedbacks for the current order
-        }
-
-        // Return the aggregated list of feedbacks
-        return allFeedbacks;
+        return orders.stream()
+                .flatMap(order -> order.getRateEntities().stream())
+                .collect(Collectors.toList());
     }
-
-    @Override
-    public void enhanceOrder(OrderEntity order, boolean addToppings, boolean specialPackaging) {
-        if (addToppings) {
-            order.getPizzaEntity().setToppingsType(ToppingsType.CHICKEN); // Example topping enhancement
-        }
-        if (specialPackaging) {
-            // Add logic for special packaging
-        }
-    }
-
-    public void notifyObservers(OrderEntity order) {
-        for (OrderObserver observer : observers) {
-            observer.update(order.getStatus());
-        }
-    }
-
 }

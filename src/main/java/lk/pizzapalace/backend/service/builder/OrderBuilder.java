@@ -8,11 +8,17 @@ import lk.pizzapalace.backend.entity.enums.DeliveryType;
 import lk.pizzapalace.backend.entity.enums.OrderStatus;
 
 public class OrderBuilder {
+    private Long id;
     private DeliveryType deliveryType;
     private OrderStatus status;
     private UserEntity user;
     private PizzaEntity pizza;
     private PaymentEntity payment;
+
+    public OrderBuilder setId(Long id) {
+        this.id = id;
+        return this;
+    }
 
     public OrderBuilder setDeliveryType(DeliveryType deliveryType) {
         this.deliveryType = deliveryType;
@@ -41,6 +47,7 @@ public class OrderBuilder {
 
     public OrderEntity build() {
         OrderEntity order = new OrderEntity();
+        order.setId(id);
         order.setDeliveryType(deliveryType);
         order.setStatus(status);
         order.setUserEntity(user);
