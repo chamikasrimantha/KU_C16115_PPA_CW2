@@ -54,9 +54,9 @@ public class OrderController {
     }
 
     public void startApp() {
-        System.out.println("╔═══════════════════════════════════════════╗");
-        System.out.println("║  Welcome to Pizza Palace Order Management ║");
-        System.out.println("╚═══════════════════════════════════════════╝");
+        System.out.println("╔═══════════════════════════════════════════════╗");
+        System.out.println("║  Welcome to Pizza Palace Food Ordering System ║");
+        System.out.println("╚═══════════════════════════════════════════════╝");
         start();
     }
 
@@ -299,14 +299,22 @@ public class OrderController {
     }
 
     private void customizePizza() {
-        System.out.println("Customizing your pizza...");
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║        Pizza Customization           ║");
+        System.out.println("╚══════════════════════════════════════╝");
 
-        // Prompt the user for pizza details
+        // Get pizza name
         System.out.print("Enter pizza name: ");
         String name = scanner.nextLine();
 
-        // Select crust type
-        System.out.println("Choose crust type: (1) THIN_CRUST, (2) THICK_CRUST, (3) CHEESE_STUFFED");
+        // Crust selection
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║           Select Crust               ║");
+        System.out.println("║  1. Thin Crust     [Rs. " + CrustType.THIN_CRUST.getPrice() + "]         ║");
+        System.out.println("║  2. Thick Crust    [Rs. " + CrustType.THICK_CRUST.getPrice() + "]         ║");
+        System.out.println("║  3. Cheese Stuffed [Rs. " + CrustType.CHEESE_STUFFED.getPrice() + "]         ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.print("Choose crust (1-3): ");
         int crustChoice = Integer.parseInt(scanner.nextLine());
         CrustType crustType = switch (crustChoice) {
             case 1 -> CrustType.THIN_CRUST;
@@ -315,8 +323,14 @@ public class OrderController {
             default -> throw new IllegalArgumentException("Invalid crust type");
         };
 
-        // Select sauce type
-        System.out.println("Choose sauce type: (1) TOMATO, (2) GARLIC, (3) PESTO");
+        // Sauce selection
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║           Select Sauce               ║");
+        System.out.println("║  1. Tomato  [Rs. " + SauceType.TOMATO.getPrice() + "]                 ║");
+        System.out.println("║  2. Garlic  [Rs. " + SauceType.GARLIC.getPrice() + "]                 ║");
+        System.out.println("║  3. Pesto   [Rs. " + SauceType.PESTO.getPrice() + "]                 ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.print("Choose sauce (1-3): ");
         int sauceChoice = Integer.parseInt(scanner.nextLine());
         SauceType sauceType = switch (sauceChoice) {
             case 1 -> SauceType.TOMATO;
@@ -325,8 +339,15 @@ public class OrderController {
             default -> throw new IllegalArgumentException("Invalid sauce type");
         };
 
-        // Select toppings type
-        System.out.println("Choose toppings type: (1) PEPPERONI, (2) MUSHROOMS, (3) OLIVES, (4) CHICKEN");
+        // Toppings selection
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║          Select Toppings             ║");
+        System.out.println("║  1. Pepperoni [Rs. " + ToppingsType.PEPPERONI.getPrice() + "]               ║");
+        System.out.println("║  2. Mushrooms [Rs. " + ToppingsType.MUSHROOMS.getPrice() + "]               ║");
+        System.out.println("║  3. Olives    [Rs. " + ToppingsType.OLIVES.getPrice() + "]               ║");
+        System.out.println("║  4. Chicken   [Rs. " + ToppingsType.CHICKEN.getPrice() + "]               ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.print("Choose toppings (1-4): ");
         int toppingsChoice = Integer.parseInt(scanner.nextLine());
         ToppingsType toppingsType = switch (toppingsChoice) {
             case 1 -> ToppingsType.PEPPERONI;
@@ -336,8 +357,14 @@ public class OrderController {
             default -> throw new IllegalArgumentException("Invalid toppings type");
         };
 
-        // Select cheese type
-        System.out.println("Choose cheese type: (1) MOZZARELLA, (2) CHEDDAR, (3) VEGAN");
+        // Cheese selection
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║           Select Cheese              ║");
+        System.out.println("║  1. Mozzarella [Rs. " + CheeseType.MOZZARELLA.getPrice() + "]              ║");
+        System.out.println("║  2. Cheddar    [Rs. " + CheeseType.CHEDDAR.getPrice() + "]              ║");
+        System.out.println("║  3. Vegan      [Rs. " + CheeseType.VEGAN.getPrice() + "]              ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.print("Choose cheese (1-3): ");
         int cheeseChoice = Integer.parseInt(scanner.nextLine());
         CheeseType cheeseType = switch (cheeseChoice) {
             case 1 -> CheeseType.MOZZARELLA;
@@ -346,10 +373,8 @@ public class OrderController {
             default -> throw new IllegalArgumentException("Invalid cheese type");
         };
 
-        // Calculate the price using the selected enum prices
+        // Calculate and create pizza
         double price = crustType.getPrice() + sauceType.getPrice() + toppingsType.getPrice() + cheeseType.getPrice();
-
-        // Create the pizza entity
         PizzaEntity pizza = new PizzaEntity();
         pizza.setId(pizzaIdCounter++);
         pizza.setName(name);
@@ -359,20 +384,22 @@ public class OrderController {
         pizza.setCheeseType(cheeseType);
         pizza.setPrice(price);
 
-        // Call the service to save the customized pizza
         PizzaEntity customizedPizza = pizzaService.customizePizza(pizza);
 
-        // Display the details of the customized pizza
-        System.out.println("Pizza customized successfully:");
-        System.out.println("Name: " + customizedPizza.getName());
-        System.out.println("Crust: " + customizedPizza.getCrustType() + " - Rs. " + crustType.getPrice());
-        System.out.println("Sauce: " + customizedPizza.getSauceType() + " - Rs. " + sauceType.getPrice());
-        System.out.println("Toppings: " + customizedPizza.getToppingsType() + " - Rs. " + toppingsType.getPrice());
-        System.out.println("Cheese: " + customizedPizza.getCheeseType() + " - Rs. " + cheeseType.getPrice());
-        System.out.println("Total Price: Rs. " + customizedPizza.getPrice());
+        // Display order summary
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║          Customized Pizza            ║");
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("  Name: " + customizedPizza.getName());
+        System.out.println("  Crust: " + customizedPizza.getCrustType() + " - Rs. " + crustType.getPrice());
+        System.out.println("  Sauce: " + customizedPizza.getSauceType() + " - Rs. " + sauceType.getPrice());
+        System.out.println("  Toppings: " + customizedPizza.getToppingsType() + " - Rs. " + toppingsType.getPrice());
+        System.out.println("  Cheese: " + customizedPizza.getCheeseType() + " - Rs. " + cheeseType.getPrice());
+        System.out.println("  Total Price: Rs. " + customizedPizza.getPrice());
+        System.out.println("╚══════════════════════════════════════╝");
 
-        // Ask if the user wants to add the pizza to their favorites
-        System.out.println("Do you want to add this pizza to your favorites? (yes/no)");
+        // Add to favorites prompt
+        System.out.print("\nAdd to favorites? (yes/no): ");
         String addToFavorites = scanner.nextLine().toLowerCase();
 
         if (addToFavorites.equals("yes")) {
@@ -415,22 +442,32 @@ public class OrderController {
 
     private void placeOrder() {
         if (currentUser == null) {
-            System.out.println("You must log in to place an order.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    Please login to place order!      ║");
+            System.out.println("╚══════════════════════════════════════╝");
             return;
         }
 
-        // Ensure the current user is a Customer
         if (!(currentUser instanceof Customer)) {
-            System.out.println("Ordering is only available for registered customers.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║  Ordering is for customers only!     ║");
+            System.out.println("╚══════════════════════════════════════╝");
             return;
         }
 
         Customer customer = (Customer) currentUser;
 
-        System.out.println("Placing an order for your pizza...");
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║         Place Your Order             ║");
+        System.out.println("╚══════════════════════════════════════╝");
 
-        // Choose delivery type
-        System.out.println("Choose delivery type: (1) PICKUP, (2) DELIVERY");
+        // Delivery selection
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║         Delivery Options             ║");
+        System.out.println("║  1. Pickup                          ║");
+        System.out.println("║  2. Home Delivery                   ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.print("Select delivery type (1-2): ");
         int deliveryChoice = Integer.parseInt(scanner.nextLine());
         DeliveryType deliveryType = switch (deliveryChoice) {
             case 1 -> DeliveryType.PICKUP;
@@ -438,8 +475,13 @@ public class OrderController {
             default -> throw new IllegalArgumentException("Invalid delivery type");
         };
 
-        // Choose payment type
-        System.out.println("Choose payment type: (1) CREDIT_CARD, (2) DIGITAL_WALLET");
+        // Payment selection
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║         Payment Options              ║");
+        System.out.println("║  1. Credit Card                     ║");
+        System.out.println("║  2. Digital Wallet                  ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.print("Select payment method (1-2): ");
         int paymentChoice = Integer.parseInt(scanner.nextLine());
         PaymentType paymentType = switch (paymentChoice) {
             case 1 -> PaymentType.CREDIT_CARD;
@@ -447,106 +489,105 @@ public class OrderController {
             default -> throw new IllegalArgumentException("Invalid payment type");
         };
 
-        // Ask for payment details based on payment type
+        // Payment details collection
         if (paymentType == PaymentType.CREDIT_CARD) {
-            System.out.println("Enter Credit Card Details:");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║       Credit Card Details            ║");
+            System.out.println("╚══════════════════════════════════════╝");
             System.out.print("Card Number: ");
             scanner.nextLine();
             System.out.print("Cardholder Name: ");
             scanner.nextLine();
-            System.out.print("Expiry Date (MM/YY): ");
+            System.out.print("Expiry (MM/YY): ");
             scanner.nextLine();
             System.out.print("CVV: ");
             scanner.nextLine();
-
-            System.out.println("Credit Card details captured. Proceeding with payment...");
-        } else if (paymentType == PaymentType.DIGITAL_WALLET) {
-            System.out.println("Enter Digital Wallet Details:");
-            System.out.print("Wallet Name (e.g., PayPal, Google Pay): ");
+        } else {
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║      Digital Wallet Details          ║");
+            System.out.println("╚══════════════════════════════════════╝");
+            System.out.print("Wallet Name (PayPal/GPay): ");
             scanner.nextLine();
             System.out.print("Wallet ID/Email: ");
             scanner.nextLine();
-
-            System.out.println("Digital Wallet details captured. Proceeding with payment...");
         }
 
-        // Check current loyalty points
+        // Loyalty points section
         int currentLoyaltyPoints = orderService.getLoyaltyPoints(customer);
-        System.out.println("Your current loyalty points: " + currentLoyaltyPoints);
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║         Loyalty Points               ║");
+        System.out.println("║  Current Points: " + String.format("%-15d", currentLoyaltyPoints) + "║");
+        System.out.println("╚══════════════════════════════════════╝");
 
-        // Check if customer wants to use loyalty points
         boolean isLoyaltyUsed = false;
         double discountAmount = 0;
 
         if (currentLoyaltyPoints > 0) {
-            System.out.println("Do you want to use loyalty points? (yes/no)");
+            System.out.print("Use loyalty points? (yes/no): ");
             if (scanner.nextLine().equalsIgnoreCase("yes")) {
-                // Loyalty points redemption options
-                System.out.println("Redemption Options:");
-                System.out.println("1. 100 points = Rs. 10 discount");
-                System.out.println("2. 200 points = Rs. 25 discount");
-                System.out.println("3. 500 points = Rs. 75 discount");
-                System.out.println("4. 1000 points= Rs. 150 discount");
-                System.out.println("5. Cancel");
-                System.out.print("Choose a redemption option: ");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║       Redemption Options             ║");
+                System.out.println("║  1. 100 points  = Rs. 10 off        ║");
+                System.out.println("║  2. 200 points  = Rs. 25 off        ║");
+                System.out.println("║  3. 500 points  = Rs. 75 off        ║");
+                System.out.println("║  4. 1000 points = Rs. 150 off       ║");
+                System.out.println("║  5. Cancel                          ║");
+                System.out.println("╚══════════════════════════════════════╝");
+                System.out.print("Choose option (1-5): ");
 
                 int redeemChoice = Integer.parseInt(scanner.nextLine());
-
                 switch (redeemChoice) {
-                    case 1:
+                    case 1 -> {
                         if (currentLoyaltyPoints >= 100) {
                             isLoyaltyUsed = true;
                             discountAmount = 10;
                             customer.setLoyaltyPoints(currentLoyaltyPoints - 100);
                         } else {
-                            System.out.println("Insufficient points for this redemption.");
+                            System.out.println("Insufficient points!");
                         }
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         if (currentLoyaltyPoints >= 200) {
                             isLoyaltyUsed = true;
                             discountAmount = 25;
                             customer.setLoyaltyPoints(currentLoyaltyPoints - 200);
                         } else {
-                            System.out.println("Insufficient points for this redemption.");
+                            System.out.println("Insufficient points!");
                         }
-                        break;
-                    case 3:
+                    }
+                    case 3 -> {
                         if (currentLoyaltyPoints >= 500) {
                             isLoyaltyUsed = true;
                             discountAmount = 75;
                             customer.setLoyaltyPoints(currentLoyaltyPoints - 500);
                         } else {
-                            System.out.println("Insufficient points for this redemption.");
+                            System.out.println("Insufficient points!");
                         }
-                        break;
-                    case 4:
+                    }
+                    case 4 -> {
                         if (currentLoyaltyPoints >= 1000) {
                             isLoyaltyUsed = true;
                             discountAmount = 150;
                             customer.setLoyaltyPoints(currentLoyaltyPoints - 1000);
                         } else {
-                            System.out.println("Insufficient points for this redemption.");
+                            System.out.println("Insufficient points!");
                         }
-                        break;
-                    case 5:
-                        // User cancelled loyalty points usage
-                        break;
-                    default:
-                        System.out.println("Invalid option.");
+                    }
                 }
             }
         }
 
-        // Retrieve or create a pizza entity
-        System.out.println("Enter the pizza ID you want to order or customize a new pizza (enter 'new'):");
+        // Pizza selection
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║          Pizza Selection             ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.print("Enter pizza ID or 'new' to customize: ");
         String pizzaInput = scanner.nextLine();
 
         PizzaEntity pizzaEntity;
         if (pizzaInput.equalsIgnoreCase("new")) {
-            // Customize and create a new pizza
             customizePizza();
-            System.out.println("Enter the pizza ID of the customized pizza:");
+            System.out.print("Enter customized pizza ID: ");
             Long pizzaId = Long.parseLong(scanner.nextLine());
             pizzaEntity = pizzaService.getPizzaById(pizzaId);
         } else {
@@ -554,26 +595,20 @@ public class OrderController {
             pizzaEntity = pizzaService.getPizzaById(pizzaId);
         }
 
-        // Calculate price with loyalty discount
-        double price = pizzaEntity.getPrice();
-        if (isLoyaltyUsed) {
-            price -= discountAmount;
-        }
+        // Process order
+        double price = pizzaEntity.getPrice() - (isLoyaltyUsed ? discountAmount : 0);
 
-        // Create payment entity
         PaymentEntity paymentEntity = new PaymentEntity();
         paymentEntity.setPaymentType(paymentType);
         paymentEntity.setPrice(price);
         paymentEntity.setLoyaltyUsed(isLoyaltyUsed);
 
-        // Process payment
         PaymentStrategy paymentStrategy = paymentType == PaymentType.CREDIT_CARD
                 ? new CreditCardPayment()
                 : new DigitalWalletPayment();
 
         orderService.processPayment(paymentEntity, paymentStrategy);
 
-        // Create order entity
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setId(orderIdCounter++);
         orderEntity.setDeliveryType(deliveryType);
@@ -582,199 +617,202 @@ public class OrderController {
         orderEntity.setPizzaEntity(pizzaEntity);
         orderEntity.setPaymentEntity(paymentEntity);
 
-        // Save and notify observers of the new order
         OrderEntity createdOrder = orderService.createOrder(orderEntity);
-
-        // Add loyalty points for this purchase
         orderService.addLoyaltyPoints(customer, createdOrder.getPaymentEntity().getPrice());
 
-        // Display order details
-        System.out.println("Order placed successfully!");
-        System.out.println("Order ID: " + createdOrder.getId());
-        System.out.println("Delivery Type: " + createdOrder.getDeliveryType());
-        System.out.println("Status: " + createdOrder.getStatus());
-        System.out.println("Pizza: " + createdOrder.getPizzaEntity().getName());
-        System.out.println("Payment: " + createdOrder.getPaymentEntity().getPaymentType());
-        System.out.println("Total Price: Rs. " + createdOrder.getPaymentEntity().getPrice());
-
+        // Order summary
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║         Order Summary                ║");
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("  Order ID: " + createdOrder.getId());
+        System.out.println("  Pizza: " + createdOrder.getPizzaEntity().getName());
+        System.out.println("  Delivery: " + createdOrder.getDeliveryType());
+        System.out.println("  Payment: " + createdOrder.getPaymentEntity().getPaymentType());
+        System.out.println("  Status: " + createdOrder.getStatus());
         if (isLoyaltyUsed) {
-            System.out.println("Loyalty points used: Discount of Rs. " + discountAmount);
+            System.out.println("  Discount Applied: Rs. " + discountAmount);
         }
-
-        // Show updated loyalty points
-        System.out.println("Updated Loyalty Points: " + orderService.getLoyaltyPoints(customer));
+        System.out.println("  Total Price: Rs. " + createdOrder.getPaymentEntity().getPrice());
+        System.out.println("  Updated Points: " + orderService.getLoyaltyPoints(customer));
+        System.out.println("╚══════════════════════════════════════╝");
     }
 
     private void trackOrder() {
-        // Ensure there is a logged-in user
         if (currentUser == null) {
-            System.out.println("No user is currently logged in.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    Please login to track orders!     ║");
+            System.out.println("╚══════════════════════════════════════╝");
             return;
         }
 
         try {
-            // Get all orders
-            List<OrderEntity> allOrders = orderService.getAllOrders();
-
-            // Filter orders for the current user
-            List<OrderEntity> userOrders = allOrders.stream()
+            List<OrderEntity> userOrders = orderService.getAllOrders().stream()
                     .filter(order -> order.getUserEntity().equals(currentUser))
                     .collect(Collectors.toList());
 
-            // Check if user has any orders
             if (userOrders.isEmpty()) {
-                System.out.println("You have no orders to track.");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║      No orders found to track!      ║");
+                System.out.println("╚══════════════════════════════════════╝");
                 return;
             }
 
-            // Display user's orders
-            System.out.println("Your Orders:");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║           Your Orders                ║");
+            System.out.println("╠══════════════════════════════════════╣");
             for (OrderEntity order : userOrders) {
-                System.out.println("Order ID: " + order.getId() +
-                        " | Total Price: Rs. " + order.getPizzaEntity().getPrice() +
-                        " | Current Status: " + order.getStatus());
+                System.out.printf("  Order #%-3d | Rs. %-7.2f | %-15s%n",
+                        order.getId(),
+                        order.getPizzaEntity().getPrice(),
+                        order.getStatus());
             }
+            System.out.println("╚══════════════════════════════════════╝");
 
-            // Prompt user to track a specific order
-            System.out.println("\nEnter the Order ID to get detailed status (or 0 to exit):");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║         Order Tracking               ║");
+            System.out.println("╚══════════════════════════════════════╝");
+            System.out.print("Enter Order ID (0 to exit): ");
             Long orderId = Long.parseLong(scanner.nextLine());
 
-            // Exit if user chooses to
             if (orderId == 0) {
                 return;
             }
 
-            // Find and track the specific order
             OrderEntity selectedOrder = orderService.getOrderById(orderId);
 
-            // Validate the order
             if (selectedOrder == null) {
-                System.out.println("Invalid Order ID. No order found.");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║      Invalid Order ID!              ║");
+                System.out.println("╚══════════════════════════════════════╝");
                 return;
             }
 
-            // Verify the order belongs to the current user
             if (!selectedOrder.getUserEntity().equals(currentUser)) {
-                System.out.println("You do not have permission to view this order.");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║   Unauthorized to view this order!  ║");
+                System.out.println("╚══════════════════════════════════════╝");
                 return;
             }
 
-            // Display detailed order status
-            System.out.println("\nOrder Details:");
-            System.out.println("Order ID: " + selectedOrder.getId());
-            System.out.println("Total Price: Rs. " + selectedOrder.getPizzaEntity().getPrice());
-            System.out.println("Current Status: " + selectedOrder.getStatus());
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║         Order Details                ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("  Order ID: " + selectedOrder.getId());
+            System.out.println("  Pizza: " + selectedOrder.getPizzaEntity().getName());
+            System.out.println("  Price: Rs. " + selectedOrder.getPizzaEntity().getPrice());
+            System.out.println("  Status: " + selectedOrder.getStatus());
 
-            // Optional: Add more detailed status tracking logic if needed
-            switch (selectedOrder.getStatus()) {
-                case ORDER_RECEIVED:
-                    System.out.println("Your order has been placed.");
-                    break;
-                case ORDER_PREPARING_STARTED:
-                    System.out.println("Your order is being started to preparing in the kitchen.");
-                    break;
-                case ORDER_PREPARED:
-                    System.out.println("Your order is being prepared.");
-                    break;
-                case OUT_FOR_DELIVERY:
-                    System.out.println("Your order is out for delivery.");
-                    break;
-                case DELIVERED:
-                    System.out.println("Your order has delivered.");
-                    break;
-                case READY_FOR_PICKUP:
-                    System.out.println("Your order is ready for pickup.");
-                    break;
-                default:
-                    System.out.println("Order status is currently undefined.");
-            }
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("║         Status Details               ║");
+            System.out.println("╠══════════════════════════════════════╣");
+
+            String statusMessage = switch (selectedOrder.getStatus()) {
+                case ORDER_RECEIVED -> "  Your order has been received";
+                case ORDER_PREPARING_STARTED -> "  Chef has started preparing your order";
+                case ORDER_PREPARED -> "  Your delicious pizza is ready";
+                case OUT_FOR_DELIVERY -> "  Your pizza is on its way to you";
+                case DELIVERED -> "  Order delivered successfully";
+                case READY_FOR_PICKUP -> "  Your order is ready for pickup";
+                default -> "  Status currently undefined";
+            };
+
+            System.out.println(statusMessage);
+            System.out.println("╚══════════════════════════════════════╝");
 
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid Order ID.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    Please enter a valid Order ID!    ║");
+            System.out.println("╚══════════════════════════════════════╝");
         } catch (Exception e) {
-            System.out.println("An error occurred while tracking the order: " + e.getMessage());
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    An error occurred! Try again.     ║");
+            System.out.println("╚══════════════════════════════════════╝");
         }
     }
 
     private void userProfile() {
-        // Ensure there is a logged-in user
         if (currentUser == null) {
-            System.out.println("No user is currently logged in.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    Please login to view profile!     ║");
+            System.out.println("╚══════════════════════════════════════╝");
             return;
         }
 
         try {
-            // Display user profile information
-            System.out.println("User Profile:");
-            System.out.println("Username: " + currentUser.getUsername());
+            // Header
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║           User Profile               ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("  Username: " + currentUser.getUsername());
+            System.out.println("╠══════════════════════════════════════╣");
 
-            // Refresh the user data to ensure we have the latest information
-            // You might need to implement this method in your UserService
-            // currentUser = userService.refreshUser(currentUser.getId());
-
-            // Get the user's favorite pizzas (FavouritePizzaEntity list)
             List<FavouritePizzaEntity> favouritePizzas = currentUser.getFavourites();
 
-            // Debug: Print the total number of favorite pizzas
-            System.out.println(
-                    "Total favorite pizzas: " + (favouritePizzas != null ? favouritePizzas.size() : "null"));
-
-            // Check if the user has any favorite pizzas
             if (favouritePizzas == null || favouritePizzas.isEmpty()) {
-                System.out.println("No favorite pizzas found.");
-            } else {
-                System.out.println("Favorite Pizzas:");
-                // Iterate over the list of FavouritePizzaEntities and print each pizza's
-                // details
-                for (FavouritePizzaEntity favouritePizzaEntity : favouritePizzas) {
-                    if (favouritePizzaEntity != null && favouritePizzaEntity.getPizzaEntity() != null) {
-                        PizzaEntity pizza = favouritePizzaEntity.getPizzaEntity(); // Get the actual PizzaEntity
-                        System.out.println("- " + pizza.getName() + " | Price: Rs. " + pizza.getPrice());
-                    } else {
-                        System.out.println("- Incomplete favorite pizza entry");
-                    }
+                System.out.println("║      No favorite pizzas found!      ║");
+                System.out.println("╚══════════════════════════════════════╝");
+                return;
+            }
+
+            System.out.println("║         Favorite Pizzas              ║");
+            System.out.println("╠══════════════════════════════════════╣");
+
+            for (FavouritePizzaEntity favouritePizzaEntity : favouritePizzas) {
+                if (favouritePizzaEntity != null && favouritePizzaEntity.getPizzaEntity() != null) {
+                    PizzaEntity pizza = favouritePizzaEntity.getPizzaEntity();
+                    System.out.printf("  %-20s | Rs. %-7.2f%n",
+                            pizza.getName(),
+                            pizza.getPrice());
+                } else {
+                    System.out.println("  Invalid pizza entry");
                 }
             }
+            System.out.println("╚══════════════════════════════════════╝");
+
         } catch (Exception e) {
-            // Handle exceptions gracefully
-            System.out.println("An error occurred while fetching the user profile: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    An error occurred! Try again.     ║");
+            System.out.println("╚══════════════════════════════════════╝");
         }
     }
 
     private void paymentAndLoyalty() {
-        // Ensure there is a logged-in user
         if (currentUser == null) {
-            System.out.println("No user is currently logged in.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    Please login to view points!      ║");
+            System.out.println("╚══════════════════════════════════════╝");
             return;
         }
 
-        // Ensure the current user is a Customer
         if (!(currentUser instanceof Customer)) {
-            System.out.println("Loyalty program is only available for registered customers.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    Customers only feature!           ║");
+            System.out.println("╚══════════════════════════════════════╝");
             return;
         }
 
         Customer customer = (Customer) currentUser;
-
-        // Get current loyalty points
         int currentPoints = orderService.getLoyaltyPoints(customer);
 
-        // Display loyalty points information
-        System.out.println("\n--- Loyalty Points Information ---");
-        System.out.println("Your Current Loyalty Points: " + currentPoints + " points");
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║    Loyalty Points Information        ║");
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("  Your Current Loyalty Points: " + currentPoints + " points");
 
-        // Explain loyalty points system
-        System.out.println("\nLoyalty Points Details:");
-        System.out.println("- You earn 10 loyalty points per every Rs. 100 spent");
-        System.out.println("- Points accumulate with each purchase");
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("║       Loyalty Points Details         ║");
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("  - You earn 10 loyalty points per every Rs. 100 spent");
+        System.out.println("  - Points accumulate with each purchase");
 
-        // Show points earning potential
-        System.out.println("\nPoints Earning Guide:");
-        System.out.println("- In every pizza order you can earn 10 loyalty points per every Rs. 100 spent");
-        System.out.println("- Current balance: " + currentPoints + " points");
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("║       Points Earning Guide           ║");
+        System.out.println("╠══════════════════════════════════════╣");
+        System.out.println("  - In every pizza order you can earn 10 loyalty");
+        System.out.println("    points per every Rs. 100 spent");
+        System.out.println("  - Current balance: " + currentPoints + " points");
+        System.out.println("╚══════════════════════════════════════╝");
 
-        // Press any key to continue
         System.out.println("\nPress Enter to return...");
         scanner.nextLine();
     }
@@ -782,7 +820,9 @@ public class OrderController {
     private void provideFeedback() {
         // Ensure there is a logged-in user
         if (currentUser == null) {
-            System.out.println("No user is currently logged in.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║    No user is currently logged in.   ║");
+            System.out.println("╚══════════════════════════════════════╝");
             return;
         }
 
@@ -793,12 +833,18 @@ public class OrderController {
 
         // Check if user has any orders
         if (userOrders.isEmpty()) {
-            System.out.println("You have no orders to provide feedback for.");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║ You have no orders to provide        ║");
+            System.out.println("║ feedback for.                        ║");
+            System.out.println("╚══════════════════════════════════════╝");
             return;
         }
 
         // Show all feedbacks provided by the current user
-        System.out.println("\n--- Your Feedbacks ---");
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║         Your Feedbacks               ║");
+        System.out.println("╚══════════════════════════════════════╝");
+
         List<RateEntity> userFeedbacks = orderService.getAllFeedbacks().stream()
                 .filter(feedback -> feedback.getOrderEntity().getUserEntity().equals(currentUser))
                 .collect(Collectors.toList());
@@ -816,7 +862,9 @@ public class OrderController {
 
         while (true) {
             // Display user's orders
-            System.out.println("\n--- Your Orders ---");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║         Your Orders                 ║");
+            System.out.println("╚══════════════════════════════════════╝");
             for (int i = 0; i < userOrders.size(); i++) {
                 OrderEntity order = userOrders.get(i);
                 System.out.println((i + 1) + ". Order ID: " + order.getId()
@@ -831,7 +879,9 @@ public class OrderController {
             try {
                 choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║  Invalid input. Please enter a number.║");
+                System.out.println("╚══════════════════════════════════════╝");
                 continue;
             }
 
@@ -842,7 +892,9 @@ public class OrderController {
 
             // Validate order selection
             if (choice < 1 || choice > userOrders.size()) {
-                System.out.println("Invalid order selection.");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║      Invalid order selection.        ║");
+                System.out.println("╚══════════════════════════════════════╝");
                 continue;
             }
 
@@ -851,7 +903,10 @@ public class OrderController {
 
             // Check if order is eligible for feedback
             if (selectedOrder.getStatus() != OrderStatus.DELIVERED) {
-                System.out.println("You can only provide feedback for delivered orders.");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║ You can only provide feedback for    ║");
+                System.out.println("║ delivered orders.                    ║");
+                System.out.println("╚══════════════════════════════════════╝");
                 continue;
             }
 
@@ -861,11 +916,16 @@ public class OrderController {
             try {
                 rating = Double.parseDouble(scanner.nextLine());
                 if (rating < 1 || rating > 5) {
-                    System.out.println("Rating must be between 1 and 5.");
+                    System.out.println("\n╔══════════════════════════════════════╗");
+                    System.out.println("║   Rating must be between 1 and 5.    ║");
+                    System.out.println("╚══════════════════════════════════════╝");
                     continue;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid rating. Please enter a number between 1 and 5.");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║ Invalid rating. Please enter a number ║");
+                System.out.println("║ between 1 and 5.                      ║");
+                System.out.println("╚══════════════════════════════════════╝");
                 continue;
             }
 
@@ -883,7 +943,9 @@ public class OrderController {
             // Save feedback
             orderService.provideFeedback(rateEntity);
 
-            System.out.println("\nThank you for your feedback!");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║     Thank you for your feedback!     ║");
+            System.out.println("╚══════════════════════════════════════╝");
 
             // Option to provide feedback for another order
             System.out.println("Do you want to provide feedback for another order? (yes/no)");
@@ -896,20 +958,22 @@ public class OrderController {
     // Method to add a promotion
     private void addPromotion() {
         try {
-            System.out.println("Enter Promotion Details:");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║       Enter Promotion Details        ║");
+            System.out.println("╠══════════════════════════════════════╣");
 
             // Read the promotion details
-            System.out.print("Description: ");
+            System.out.print("  Description: ");
             String description = scanner.nextLine();
 
-            System.out.print("Discount: ");
+            System.out.print("  Discount: ");
             double discount = Double.parseDouble(scanner.nextLine());
 
-            System.out.print("Start Date (yyyy-MM-dd): ");
+            System.out.print("  Start Date (yyyy-MM-dd): ");
             String startDateStr = scanner.nextLine();
             Date startDate = java.sql.Date.valueOf(startDateStr); // Assuming the date format is 'yyyy-MM-dd'
 
-            System.out.print("End Date (yyyy-MM-dd): ");
+            System.out.print("  End Date (yyyy-MM-dd): ");
             String endDateStr = scanner.nextLine();
             Date endDate = java.sql.Date.valueOf(endDateStr);
 
@@ -924,41 +988,57 @@ public class OrderController {
             // Add promotion to the list
             PromotionEntity addedPromotion = orderService.addPromotion(promotion);
 
-            System.out.println("Promotion added successfully: " + addedPromotion.getDescription());
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║       Promotion Added Success        ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("  " + addedPromotion.getDescription());
+            System.out.println("╚══════════════════════════════════════╝");
+
         } catch (Exception e) {
-            System.out.println("Error adding promotion: " + e.getMessage());
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║          Error Adding Promotion      ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("  " + e.getMessage());
+            System.out.println("╚══════════════════════════════════════╝");
         }
     }
 
     // Method to view active promotions
     private void viewPromotions() {
         try {
-            System.out.println("Active Promotions:");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║          Active Promotions           ║");
+            System.out.println("╠══════════════════════════════════════╣");
 
             // Get active promotions
             List<PromotionEntity> activePromotions = orderService.getActivePromotions();
 
             if (activePromotions.isEmpty()) {
-                System.out.println("No active promotions at the moment.");
+                System.out.println("║  No active promotions at the moment  ║");
             } else {
-                // Display active promotions
                 for (PromotionEntity promotion : activePromotions) {
-                    System.out.println("Description: " + promotion.getDescription());
-                    System.out.println("Discount: " + promotion.getDiscount() + "%");
-                    System.out.println("Start Date: " + promotion.getStartDate());
-                    System.out.println("End Date: " + promotion.getEndDate());
-                    System.out.println("-----------------------------------");
+                    System.out.println("╠══════════════════════════════════════╣");
+                    System.out.println("║ Description: " + promotion.getDescription());
+                    System.out.println("║ Discount: " + promotion.getDiscount() + "%");
+                    System.out.println("║ Start Date: " + promotion.getStartDate());
+                    System.out.println("║ End Date: " + promotion.getEndDate());
                 }
             }
+            System.out.println("╚══════════════════════════════════════╝");
         } catch (Exception e) {
-            System.out.println("Error viewing promotions: " + e.getMessage());
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║         Error Viewing Promotions      ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("  " + e.getMessage());
+            System.out.println("╚══════════════════════════════════════╝");
         }
     }
 
     private void updateOrderStatus() {
         try {
-            // Display all orders
-            System.out.println("All Orders:");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║              All Orders              ║");
+            System.out.println("╠══════════════════════════════════════╣");
 
             // Fetch all orders and sort them so DELIVERED comes last
             List<OrderEntity> ordersList = orderService.getAllOrders();
@@ -970,54 +1050,77 @@ public class OrderController {
                 return o1.getStatus().compareTo(o2.getStatus());
             });
 
-            // Display orders
-            for (OrderEntity order : ordersList) {
-                System.out.println("Order ID: " + order.getId() + "  | Status: " + order.getStatus() + "  | Username: "
-                        + order.getUserEntity().getUsername());
+            if (ordersList.isEmpty()) {
+                System.out.println("║         No orders available.         ║");
+            } else {
+                for (OrderEntity order : ordersList) {
+                    System.out.println("╠══════════════════════════════════════╣");
+                    System.out.println("║ Order ID: " + order.getId());
+                    System.out.println("║ Status: " + order.getStatus());
+                    System.out.println("║ Username: " + order.getUserEntity().getUsername());
+                }
             }
+            System.out.println("╚══════════════════════════════════════╝");
 
             // Ask user to select an order ID to update status
-            System.out.print("Enter the order ID to update status: ");
+            System.out.print("\nEnter the order ID to update status: ");
             Long orderId = Long.parseLong(scanner.nextLine());
 
             // Fetch the order to update
             OrderEntity orderToUpdate = orderService.getOrderById(orderId);
             if (orderToUpdate == null) {
-                System.out.println("Order not found.");
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║          Order Not Found             ║");
+                System.out.println("╚══════════════════════════════════════╝");
                 return;
             }
 
             // Ask for new status
-            System.out.println("Select new status for Order ID " + orderId + ":");
-            System.out.println("1) ORDER_RECEIVED");
-            System.out.println("2) ORDER_PREPARING_STARTED");
-            System.out.println("3) ORDER_PREPARED");
-            System.out.println("4) READY_FOR_PICKUP");
-            System.out.println("5) OUT_FOR_DELIVERY");
-            System.out.println("6) DELIVERED");
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║       Select New Status              ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("║ 1) ORDER_RECEIVED                    ║");
+            System.out.println("║ 2) ORDER_PREPARING_STARTED           ║");
+            System.out.println("║ 3) ORDER_PREPARED                    ║");
+            System.out.println("║ 4) READY_FOR_PICKUP                  ║");
+            System.out.println("║ 5) OUT_FOR_DELIVERY                  ║");
+            System.out.println("║ 6) DELIVERED                         ║");
+            System.out.println("╚══════════════════════════════════════╝");
 
             int statusChoice = Integer.parseInt(scanner.nextLine());
-            OrderStatus newStatus = null;
+            OrderStatus newStatus = switch (statusChoice) {
+                case 1 -> OrderStatus.ORDER_RECEIVED;
+                case 2 -> OrderStatus.ORDER_PREPARING_STARTED;
+                case 3 -> OrderStatus.ORDER_PREPARED;
+                case 4 -> OrderStatus.READY_FOR_PICKUP;
+                case 5 -> OrderStatus.OUT_FOR_DELIVERY;
+                case 6 -> OrderStatus.DELIVERED;
+                default -> null;
+            };
 
-            switch (statusChoice) {
-                case 1 -> newStatus = OrderStatus.ORDER_RECEIVED;
-                case 2 -> newStatus = OrderStatus.ORDER_PREPARING_STARTED;
-                case 3 -> newStatus = OrderStatus.ORDER_PREPARED;
-                case 4 -> newStatus = OrderStatus.READY_FOR_PICKUP;
-                case 5 -> newStatus = OrderStatus.OUT_FOR_DELIVERY;
-                case 6 -> newStatus = OrderStatus.DELIVERED;
-                default -> System.out.println("Invalid choice!");
-            }
-
-            // Update the order status
-            if (newStatus != null) {
+            if (newStatus == null) {
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║          Invalid Choice!             ║");
+                System.out.println("╚══════════════════════════════════════╝");
+            } else {
+                // Update the order status
                 orderToUpdate.setStatus(newStatus);
-                orderService.updateOrderStatus(orderToUpdate); // Call service method to update the status
-                System.out.println("Order ID " + orderId + " status updated to " + newStatus);
+                orderService.updateOrderStatus(orderToUpdate);
+
+                System.out.println("\n╔══════════════════════════════════════╗");
+                System.out.println("║       Order Status Updated           ║");
+                System.out.println("╠══════════════════════════════════════╣");
+                System.out.println("║ Order ID: " + orderId);
+                System.out.println("║ New Status: " + newStatus);
+                System.out.println("╚══════════════════════════════════════╝");
             }
 
         } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
+            System.out.println("\n╔══════════════════════════════════════╗");
+            System.out.println("║         Error Updating Status        ║");
+            System.out.println("╠══════════════════════════════════════╣");
+            System.out.println("  " + e.getMessage());
+            System.out.println("╚══════════════════════════════════════╝");
         }
     }
 
