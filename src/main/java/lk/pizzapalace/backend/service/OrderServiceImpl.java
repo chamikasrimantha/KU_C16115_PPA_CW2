@@ -25,10 +25,13 @@ import lk.pizzapalace.backend.service.decorator.ExtraToppingsDecorator;
 import lk.pizzapalace.backend.service.decorator.OrderDecorator;
 import lk.pizzapalace.backend.service.decorator.SpecialPackagingDecorator;
 import lk.pizzapalace.backend.service.observer.OrderObserver;
+import lk.pizzapalace.backend.service.state.OrderPreparedState;
+import lk.pizzapalace.backend.service.state.OrderReceivedState;
+import lk.pizzapalace.backend.service.state.OrderState;
 import lk.pizzapalace.backend.service.strategy.PaymentStrategy;
 
 public class OrderServiceImpl implements OrderService {
-    // Collections
+    // Array Lists
     private final List<FavouritePizzaEntity> favouritePizzas = new ArrayList<>();
     private final List<PromotionEntity> promotions = new ArrayList<>();
     private final List<OrderEntity> orders = new ArrayList<>();
@@ -38,11 +41,21 @@ public class OrderServiceImpl implements OrderService {
     private final OrderCustomizationHandler crustHandler;
     private final OrderCustomizationHandler toppingsHandler;
 
+    // State pattern context
+    private OrderState orderReceivedState;
+    private OrderState orderPreparedState;
+    private OrderState currentState;
+
     public OrderServiceImpl() {
         // Initialize handlers for Chain of Responsibility
         crustHandler = new CrustCustomizationHandler();
         toppingsHandler = new ToppingsCustomizationHandler();
         crustHandler.setNextHandler(toppingsHandler);
+
+        // Initialize states
+        orderReceivedState = new OrderReceivedState();
+        orderPreparedState = new OrderPreparedState();
+        currentState = orderReceivedState;
     }
 
     @Override
@@ -58,6 +71,9 @@ public class OrderServiceImpl implements OrderService {
 
         OrderEntity newOrder = builder.build();
         orders.add(newOrder);
+
+        // Initialize state
+        currentState = orderReceivedState;
 
         // Apply Chain of Responsibility for customization
         crustHandler.handleCustomization(newOrder.getPizzaEntity());
@@ -125,7 +141,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    // Standard CRUD operations
     @Override
     public OrderEntity getOrderById(Long id) {
         return orders.stream()

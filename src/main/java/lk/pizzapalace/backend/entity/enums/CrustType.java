@@ -1,7 +1,7 @@
 package lk.pizzapalace.backend.entity.enums;
 
 public enum CrustType {
-    THIN_CRUST(500), THICK_CRUST(600), CHEESE_STUFFED(800);
+    THIN_CRUST(600), THICK_CRUST(700), CHEESE_STUFFED(800);
 
     private final double price;
 

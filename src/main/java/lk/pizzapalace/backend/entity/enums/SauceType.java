@@ -1,7 +1,7 @@
 package lk.pizzapalace.backend.entity.enums;
 
 public enum SauceType {
-    TOMATO(100), GARLIC(120), PESTO(150);
+    TOMATO(200), GARLIC(250), PESTO(300);
 
     private final double price;
 

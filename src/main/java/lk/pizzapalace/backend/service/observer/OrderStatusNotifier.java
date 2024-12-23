@@ -30,10 +30,3 @@ class ConsoleLoggerObserver implements OrderObserver {
         System.out.println("Order status changed to: " + status);
     }
 }
-
-class AppNotifierObserver implements OrderObserver {
-    @Override
-    public void update(OrderStatus status) {
-        System.out.println("Notifying app about order status: " + status);
-    }
-}

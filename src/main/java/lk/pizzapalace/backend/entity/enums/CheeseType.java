@@ -1,7 +1,7 @@
 package lk.pizzapalace.backend.entity.enums;
 
 public enum CheeseType {
-    MOZZARELLA(200), CHEDDAR(220), VEGAN(250);
+    MOZZARELLA(300), CHEDDAR(350), VEGAN(400);
 
     private final double price;
 

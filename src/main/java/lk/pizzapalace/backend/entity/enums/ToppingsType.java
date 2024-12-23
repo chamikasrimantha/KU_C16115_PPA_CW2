@@ -1,7 +1,7 @@
 package lk.pizzapalace.backend.entity.enums;
 
 public enum ToppingsType {
-    PEPPERONI(150), MUSHROOMS(100), OLIVES(100), CHICKEN(200);
+    PEPPERONI(200), MUSHROOMS(250), OLIVES(300), CHICKEN(350);
 
     private final double price;
 
